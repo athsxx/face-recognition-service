@@ -49,7 +49,7 @@ models/weights/*.onnx
 models/weights/*.pth
 models/weights/*.pt
 
-# Data
+# Data directories (created at runtime)
 data/raw/*
 data/processed/*
 data/gallery/*
@@ -65,11 +65,15 @@ temp/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# Demo outputs
+# Generated demo files
 demo_frames/
 *.gif
 benchmark_results.json
+demo_comparison.jpg
 
 # Package outputs
-FRS_Deliverables/
-FRS_Deliverables.zip
+*_Deliverables/
+*_Deliverables.zip
+
+# Backup files
+*_backup.*
