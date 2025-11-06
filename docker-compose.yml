@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  frs-api:
+    build: .
+    container_name: face-recognition-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+      - ./configs:/app/configs
+    environment:
+      - OMP_NUM_THREADS=4
+      - MKL_NUM_THREADS=4
+      - OPENBLAS_NUM_THREADS=4
+    restart: unless-stopped
+    command: uvicorn frs.api.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+  # Optional: PostgreSQL database
+  # postgres:
+  #   image: postgres:14
+  #   container_name: frs-postgres
+  #   environment:
+  #     POSTGRES_USER: frs_user
+  #     POSTGRES_PASSWORD: frs_password
+  #     POSTGRES_DB: frs_db
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+# volumes:
+#   postgres_data:

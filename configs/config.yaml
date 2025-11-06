@@ -1,0 +1,103 @@
+# Face Recognition Service Configuration
+
+# Service Settings
+service:
+  name: "face-recognition-service"
+  version: "1.0.0"
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  log_level: "info"
+
+# Face Detection Settings
+detection:
+  model_type: "retinaface"  # Options: retinaface, yolov8
+  model_path: "models/weights/retinaface_resnet50.onnx"
+  confidence_threshold: 0.3
+  nms_threshold: 0.4
+  top_k: 5000
+  keep_top_k: 750
+  input_size: [640, 640]
+  # Face quality filtering
+  min_face_size: 20  # pixels
+  max_face_size: 2000
+  blur_threshold: 50  # Laplacian variance
+  brightness_range: [20, 235]  # pixel intensity range
+
+# Face Alignment Settings
+alignment:
+  method: "5point"  # 5-point landmark alignment
+  output_size: [112, 112]
+  normalize: true
+  mean: [127.5, 127.5, 127.5]
+  std: [128.0, 128.0, 128.0]
+
+# Feature Extraction Settings
+embedding:
+  model_type: "arcface"  # Options: arcface, adaface, facenet
+  model_path: "models/weights/arcface_r100.onnx"
+  embedding_size: 512
+  batch_size: 32
+  use_onnx: true
+  onnx_threads: 4  # CPU threads for ONNX inference
+
+# Matching/Recognition Settings
+matching:
+  metric: "cosine"  # Options: cosine, l2
+  threshold: 0.55  # Similarity threshold for positive match
+  top_k: 5  # Return top K matches
+  use_faiss: true
+  faiss_index_type: "IndexFlatIP"  # Inner product for cosine similarity
+  min_confidence: 0.6
+
+# Database Settings
+database:
+  type: "sqlite"  # Options: sqlite, postgresql
+  sqlite_path: "data/frs.db"
+  postgresql_url: "postgresql://user:password@localhost:5432/frs"
+  pool_size: 10
+  max_overflow: 20
+
+# Data Preparation Settings
+data_prep:
+  dataset_dir: "data/raw"
+  processed_dir: "data/processed"
+  train_split: 0.8
+  val_split: 0.2
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    rotation_range: 15
+    brightness_range: [0.8, 1.2]
+    contrast_range: [0.8, 1.2]
+
+# Training/Fine-tuning Settings
+training:
+  enabled: false
+  epochs: 50
+  batch_size: 64
+  learning_rate: 0.001
+  checkpoint_dir: "models/checkpoints"
+  pretrained_weights: "models/weights/arcface_pretrained.pth"
+
+# Optimization Settings
+optimization:
+  enable_onnx: true
+  onnx_opset_version: 14
+  quantization: false  # INT8 quantization for further speedup
+  benchmark_iterations: 100
+
+# Monitoring & Logging
+monitoring:
+  enable_metrics: true
+  metrics_port: 9090
+  log_dir: "logs"
+  save_detection_samples: false
+  sample_dir: "data/samples"
+
+# API Settings
+api:
+  max_upload_size: 10485760  # 10MB
+  allowed_extensions: [".jpg", ".jpeg", ".png", ".bmp"]
+  enable_cors: true
+  cors_origins: ["*"]
